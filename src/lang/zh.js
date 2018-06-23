@@ -1,6 +1,7 @@
 export default {
   route: {
     dashboard: '首页',
+    Overall_Users:'所有用户',
     introduction: '简述',
     documentation: '文档',
     guide: '引导页',
@@ -27,6 +28,7 @@ export default {
     keyboardChart: '键盘图表',
     lineChart: '折线图',
     mixChart: '混合图表',
+    xbChart:'xb',
     example: '综合实例',
     Table: 'Table',
     dynamicTable: '动态Table',

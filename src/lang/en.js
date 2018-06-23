@@ -1,6 +1,7 @@
 export default {
   route: {
     dashboard: 'Dashboard',
+    Overall_Users:'Overall Users',
     introduction: 'Introduction',
     documentation: 'Documentation',
     guide: 'Guide',
@@ -27,6 +28,7 @@ export default {
     keyboardChart: 'Keyboard Chart',
     lineChart: 'Line Chart',
     mixChart: 'Mix Chart',
+    xbChart:'xb',
     example: 'Example',
     Table: 'Table',
     dynamicTable: 'Dynamic Table',

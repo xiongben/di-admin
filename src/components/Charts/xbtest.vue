@@ -5,7 +5,8 @@
 <script>
 import echarts from 'echarts'
 import resize from './mixins/resize'
-
+import { getToken } from '@/api/qiniu'
+import axios from 'axios'
 export default {
   mixins: [resize],
   props: {
@@ -28,11 +29,35 @@ export default {
   },
   data() {
     return {
-      chart: null
+      chart: null,
+      resdata:null,
+      xdata:null,
+      iosdata:null,
+      anddata:null,
+      alldata:null,
     }
   },
   mounted() {
-    this.initChart()
+    getToken().then(function(res){
+      console.log(res);
+    })
+    let that =this;
+    axios.get('/ss/v1/newapi/graph/loops_stats_dau/recent_dau?zone=sa')
+      .then((res)=> {
+        // console.log(res.data);
+         this.resdata=res.data;
+         this.xdata= that.formdata(that.resdata[0].data,0);
+         this.alldata=that.formdata(that.resdata[0].data,1);
+         this.iosdata=that.formdata(that.resdata[1].data,1);
+         this.anddata=that.formdata(that.resdata[2].data,1);
+        //  xdata=that.formdata(xdata,0);
+        //  console.log(this.alldata);
+         that.initChart();
+         
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   },
   beforeDestroy() {
     if (!this.chart) {
@@ -42,6 +67,13 @@ export default {
     this.chart = null
   },
   methods: {
+    formdata(data,type){
+      let resarr=[];
+       for(let i=0;i<data.length;i++){
+          resarr.push(data[i][type])
+       }
+       return resarr;
+    },
     initChart() {
       this.chart = echarts.init(document.getElementById(this.id))
 
@@ -71,7 +103,7 @@ export default {
           itemWidth: 14,
           itemHeight: 5,
           itemGap: 13,
-          data: ['CMCC', 'CTCC', 'CUCC'],
+          data: ['android', 'all', 'ios'],
           right: '4%',
           textStyle: {
             fontSize: 12,
@@ -93,7 +125,7 @@ export default {
               color: '#fff'
             }
           },
-          data: ['13:00', '13:05', '13:10', '13:15', '13:20', '13:25', '13:30', '13:35', '13:40', '13:45', '13:50', '13:55']
+          data: this.xdata
         }],
         yAxis: [{
           type: 'value',
@@ -119,7 +151,7 @@ export default {
           }
         }],
         series: [{
-          name: 'CMCC',
+          name: 'android',
           type: 'line',
           smooth: true,
           symbol: 'circle',
@@ -151,9 +183,9 @@ export default {
 
             }
           },
-          data: [220, 182, 191, 134, 150, 120, 110, 125, 145, 122, 165, 122]
+          data: this.anddata
         }, {
-          name: 'CTCC',
+          name: 'all',
           type: 'line',
           smooth: true,//平滑曲线
           symbol: 'triangle', //标志图标
@@ -185,9 +217,9 @@ export default {
 
             }
           },
-          data: [120, 110, 125, 145, 122, 165, 122, 220, 182, 191, 134, 150]
+          data: this.alldata
         }, {
-          name: 'CUCC',
+          name: 'ios',
           type: 'line',
           smooth: true,
           symbol: 'circle',
@@ -218,9 +250,10 @@ export default {
               borderWidth: 12
             }
           },
-          data: [220, 182, 125, 145, 122, 191, 134, 150, 120, 110, 165, 122]
+          data: this.iosdata
         }]
       })
+    
     }
   }
 }
